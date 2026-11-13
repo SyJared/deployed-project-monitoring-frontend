@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { login, register } from '../../../api/auth.js'
 import './AuthPage.css'
 
 function AuthPage() {
+  const navigate = useNavigate()
   const [mode, setMode] = useState('login')
   const [notice, setNotice] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -35,8 +37,13 @@ function AuthPage() {
         setNotice('Account created successfully. Sign in with your username and password.')
       } else {
         const result = await login({ username: formData.get('username'), password: formData.get('password') })
-        sessionStorage.setItem('user', JSON.stringify(result.user ?? result))
-        setNotice(`Signed in successfully${result.username ? ` as ${result.username}` : ''}.`)
+        const user = result.user ?? result
+        sessionStorage.setItem('user', JSON.stringify(user))
+        const userId = user.id
+        if (userId == null) {
+          throw new Error('The login response did not include a user ID.')
+        }
+        navigate(`/projects/${encodeURIComponent(userId)}`, { replace: true })
       }
     } catch (error) {
       setNotice(error instanceof TypeError
@@ -50,10 +57,10 @@ function AuthPage() {
   return (
     <main className="auth-shell">
       <section className="auth-card" aria-labelledby="auth-heading">
-        <a className="brand" href="/" aria-label="Fieldnote home">
+        <div className="brand" aria-label="Fieldnote">
           <span className="brand-mark" aria-hidden="true">F</span>
           <span>Fieldnote</span>
-        </a>
+        </div>
 
         <div className="auth-intro">
           <p className="eyebrow">PROJECT MONITORING</p>
