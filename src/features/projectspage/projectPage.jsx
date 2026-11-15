@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { GetProjectsByUserId, InsertProject } from '../../api/projects.js'
 import { checkAllDeployments } from '../../api/deploymentChecks.js'
+import Uptime from './uptime.jsx'
 
 const emptyProject = {
   projectName: '',
@@ -30,6 +31,7 @@ function ProjectPage({ onSignOut }) {
   const [formData, setFormData] = useState(emptyProject)
   const [projects, setProjects] = useState([])
   const [healthChecks, setHealthChecks] = useState([])
+  const [expandedProjectId, setExpandedProjectId] = useState(null)
 
   const [isLoading, setIsLoading] = useState(true)
   const [isChecking, setIsChecking] = useState(false)
@@ -147,6 +149,12 @@ function ProjectPage({ onSignOut }) {
   function getProjectHealth(projectId) {
     return healthChecks.find(
       (check) => check.project_id === projectId
+    )
+  }
+
+  function toggleProject(projectId) {
+    setExpandedProjectId((currentId) =>
+      currentId === projectId ? null : projectId
     )
   }
 
@@ -273,7 +281,14 @@ function ProjectPage({ onSignOut }) {
                 return (
                   <li key={project.id}>
 
-                    <strong>{project.project_name}</strong>
+                    <button
+                      type="button"
+                      className="text-button"
+                      aria-expanded={expandedProjectId === project.id}
+                      onClick={() => toggleProject(project.id)}
+                    >
+                      {project.project_name}
+                    </button>
 
                     {project.description && (
                       <p>{project.description}</p>
@@ -322,6 +337,12 @@ function ProjectPage({ onSignOut }) {
                       </p>
 
                     </div>
+
+                    {expandedProjectId === project.id && (
+                      <div className="project-uptime">
+                        <Uptime projectId={project.id} />
+                      </div>
+                    )}
 
                   </li>
                 )
