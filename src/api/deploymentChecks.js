@@ -21,3 +21,39 @@ export async function getUptime(projectId, days) {
   }
   return data;
 }
+export async function getHealthCheckById(projectId) {
+  const response = await fetch(`/api/monitoring/check/${projectId}`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || 'Unable to fetch health check data.');
+  }
+  return data;
+}
+
+export async function getDowntimeHistory(projectId) {
+  const response = await fetch(`/api/monitoring/downtime/${projectId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || 'Unable to fetch downtime history.');
+  }
+  return data;
+}
+
+export async function getOngoingDowntime(projectId) {
+  const response = await fetch(`/api/monitoring/downtime/${projectId}/ongoing`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new Error(data.message || 'Unable to fetch ongoing downtime.');
+  }
+  return data;
+}

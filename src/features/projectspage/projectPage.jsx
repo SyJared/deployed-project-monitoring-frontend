@@ -1,9 +1,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { GetProjectsByUserId, InsertProject } from '../../api/projects.js'
 import { checkAllDeployments } from '../../api/deploymentChecks.js'
-import Uptime from './uptime.jsx'
 
 const emptyProject = {
   projectName: '',
@@ -30,7 +29,7 @@ function ProjectPage() {
   const [formData, setFormData] = useState(emptyProject)
   const [projects, setProjects] = useState([])
   const [healthChecks, setHealthChecks] = useState([])
-  const [expandedProjectId, setExpandedProjectId] = useState(null)
+  const navigate = useNavigate()
 
   const [isLoading, setIsLoading] = useState(true)
   const [isChecking, setIsChecking] = useState(false)
@@ -137,12 +136,6 @@ function ProjectPage() {
   function getProjectHealth(projectId) {
     return healthChecks.find(
       (check) => check.project_id === projectId
-    )
-  }
-
-  function toggleProject(projectId) {
-    setExpandedProjectId((currentId) =>
-      currentId === projectId ? null : projectId
     )
   }
 
@@ -256,10 +249,9 @@ function ProjectPage() {
                     <button
                       type="button"
                       className="text-button"
-                      aria-expanded={expandedProjectId === project.id}
-                      onClick={() => toggleProject(project.id)}
+                      onClick={() => navigate(`/projects/${encodeURIComponent(userId)}/${encodeURIComponent(project.id)}`)}
                     >
-                      {project.project_name}
+                      {project.project_name} →
                     </button>
 
                     {project.description && (
@@ -309,12 +301,6 @@ function ProjectPage() {
                       </p>
 
                     </div>
-
-                    {expandedProjectId === project.id && (
-                      <div className="project-uptime">
-                        <Uptime projectId={project.id} />
-                      </div>
-                    )}
 
                   </li>
                 )
