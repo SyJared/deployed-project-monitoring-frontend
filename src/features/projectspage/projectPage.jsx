@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { GetProjectsByUserId, InsertProject } from '../../api/projects.js'
 import { checkAllDeployments } from '../../api/deploymentChecks.js'
 import Uptime from './uptime.jsx'
@@ -24,9 +24,8 @@ async function readResponse(response) {
   return result
 }
 
-function ProjectPage({ onSignOut }) {
+function ProjectPage() {
   const { userId } = useParams()
-  const navigate = useNavigate()
 
   const [formData, setFormData] = useState(emptyProject)
   const [projects, setProjects] = useState([])
@@ -134,17 +133,6 @@ function ProjectPage({ onSignOut }) {
     }
   }
 
-  // Sign out
-  function handleSignOut() {
-    sessionStorage.removeItem('user')
-
-    if (onSignOut) {
-      onSignOut()
-    } else {
-      navigate('/login', { replace: true })
-    }
-  }
-
   // Find the latest health check for a project
   function getProjectHealth(projectId) {
     return healthChecks.find(
@@ -161,22 +149,6 @@ function ProjectPage({ onSignOut }) {
   return (
     <main className="auth-shell">
       <section className="auth-card" aria-labelledby="projects-heading">
-
-        {/* Header */}
-        <header className="project-header">
-          <div className="brand" aria-label="Fieldnote projects">
-            <span className="brand-mark" aria-hidden="true">F</span>
-            <span>Fieldnote</span>
-          </div>
-
-          <button
-            className="text-button"
-            type="button"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </button>
-        </header>
 
         {/* Introduction */}
         <div className="auth-intro">
@@ -251,7 +223,7 @@ function ProjectPage({ onSignOut }) {
         <section className="project-list" aria-label="Project list">
 
           <div className="project-list-header">
-            <h2>Projects</h2>
+            <h2 id="project-list-heading">Projects</h2>
 
             <button
               type="button"
