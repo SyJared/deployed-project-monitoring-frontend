@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { GetProjectsByUserId } from '../../../api/projects.js'
 import DowntimeHistory from './DowntimeHistory.jsx'
+import DeploymentHistory from './DeploymentHistory.jsx'
 import HealthCheck from './HealthCheck.jsx'
 import OngoingDowntime from './OngoingDowntime.jsx'
 import Uptime from '../uptime.jsx'
@@ -76,6 +77,7 @@ function InsideProject() {
             <HealthCheck projectId={project.id} />
             <OngoingDowntime projectId={project.id} />
             <DowntimeHistory projectId={project.id} />
+            <DeploymentHistory projectId={project.id} />
             <Uptime projectId={project.id} />
           </>
         )}
