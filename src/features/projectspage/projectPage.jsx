@@ -1,8 +1,8 @@
-
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { GetProjectsByUserId, InsertProject } from '../../api/projects.js'
 import { checkAllDeployments } from '../../api/deploymentChecks.js'
+import ApiKeyDialog from './apiKeyDialog.jsx'
 
 const emptyProject = {
   projectName: '',
@@ -36,6 +36,8 @@ function ProjectPage() {
   const [isSaving, setIsSaving] = useState(false)
 
   const [notice, setNotice] = useState('')
+  // Holds the new API key only until the user confirms they saved it. Never persisted.
+  const [newKey, setNewKey] = useState(null)
   const [healthError, setHealthError] = useState('')
 
   // Load projects belonging to the current user
@@ -106,7 +108,7 @@ function ProjectPage() {
     setIsSaving(true)
 
     try {
-      await readResponse(
+      const result = await readResponse(
         await InsertProject({
           user_id: userId,
           project_name: formData.projectName,
@@ -115,6 +117,14 @@ function ProjectPage() {
           provider: formData.provider,
         })
       )
+
+      // The backend returns the API key only once, in this response.
+      if (result.api_key) {
+        setNewKey({
+          apiKey: result.api_key,
+          projectName: result.project?.project_name ?? formData.projectName,
+        })
+      }
 
       setFormData(emptyProject)
       setNotice('Project added successfully.')
@@ -314,6 +324,14 @@ function ProjectPage() {
       <footer className="page-footer">
         A clearer view of work in progress.
       </footer>
+
+      {newKey && (
+        <ApiKeyDialog
+          apiKey={newKey.apiKey}
+          projectName={newKey.projectName}
+          onClose={() => setNewKey(null)}
+        />
+      )}
     </main>
   )
 }

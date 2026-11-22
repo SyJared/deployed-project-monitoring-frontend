@@ -1,0 +1,90 @@
+.api-key-dialog {
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 24px;
+  border: 1px solid #dce3de;
+  border-radius: 10px;
+  background: #fff;
+  color: #26372d;
+  box-shadow: 0 20px 50px rgb(20 40 28 / 25%);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.api-key-dialog::backdrop { background: rgb(20 40 28 / 55%); }
+
+.api-key-dialog h2 { margin: 0 0 4px; font-size: 18px; }
+.api-key-dialog p { margin: 0 0 12px; }
+.api-key-project { color: #718078; }
+
+.api-key-warning {
+  padding: 10px 12px;
+  border-left: 4px solid #c9a227;
+  border-radius: 4px;
+  background: #fdf1d8;
+  color: #5c3f00;
+}
+
+.api-key-field { display: grid; gap: 7px; margin-bottom: 10px; color: #34443b; font-size: 12px; font-weight: 600; }
+
+.api-key-field textarea {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #dce3de;
+  border-radius: 6px;
+  outline: none;
+  background: #f5f7f6;
+  color: #26372d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  resize: none;
+  overflow-wrap: anywhere;   /* wrap the whole key instead of hiding its start */
+  field-sizing: content;     /* one line when it fits, two when it does not (where supported) */
+}
+
+.api-key-field textarea:focus { border-color: #518465; box-shadow: 0 0 0 3px rgb(81 132 101 / 13%); }
+
+.api-key-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.api-key-copy {
+  padding: 8px 12px;
+  border: 1px solid #315f43;
+  border-radius: 6px;
+  background: #fff;
+  color: #315f43;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.api-key-copy:hover { background: #eef4f0; }
+.api-key-copy:focus-visible { outline: 2px solid #518465; outline-offset: 2px; }
+
+.api-key-copy-message { min-height: 1.5em; margin: 8px 0 4px; color: #37694b; font-size: 12px; }
+
+.api-key-steps { margin: 4px 0 14px; color: #34443b; }
+
+.api-key-steps pre {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: #f5f7f6;
+  font-size: 12px;
+}
+
+.api-key-steps code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+
+.api-key-confirm { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px; cursor: pointer; }
+.api-key-confirm input { width: 16px; height: 16px; margin: 0; accent-color: #37694b; }
+
+.api-key-dialog .submit-button { width: 100%; }
+.api-key-dialog .submit-button:disabled { background: #86a392; cursor: not-allowed; }
+.api-key-dialog .submit-button:focus-visible { outline: 2px solid #518465; outline-offset: 2px; }
