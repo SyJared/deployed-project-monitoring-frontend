@@ -71,3 +71,55 @@
 }
 
 .heartbeat-dot--alive { background: #2f8f57; }
+
+.heartbeat-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  padding: 0.15rem 0.25rem;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #26372d;
+  cursor: pointer;
+}
+
+.heartbeat-switch:disabled { opacity: 0.6; cursor: progress; }
+
+.heartbeat-switch:focus-visible {
+  outline: 2px solid #518465;
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.heartbeat-switch-track {
+  position: relative;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: #7d8a82;
+  transition: background 0.15s;
+}
+
+.heartbeat-switch--on .heartbeat-switch-track { background: #2f8f57; }
+
+.heartbeat-switch-thumb {
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.15s;
+}
+
+.heartbeat-switch--on .heartbeat-switch-thumb { transform: translateX(1rem); }
+
+@media (prefers-reduced-motion: reduce) {
+  .heartbeat-switch-track,
+  .heartbeat-switch-thumb { transition: none; }
+}

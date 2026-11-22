@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react'
-import { getHeartbeatStatus } from '../../../api/heartbeat.js'
+import { useEffect, useRef, useState } from 'react'
+import { getHeartbeatStatus, setHeartbeatEnabled } from '../../../api/heartbeat.js'
 import './heartbeatStatus.css'
 
 const REFRESH_MS = 15000
 
 const DIAGNOSIS = {
+  Disabled: {
+    tone: 'neutral',
+    label: 'Off',
+    message: 'Heartbeat monitoring is off for this project. Turn it on to track whether your app is running, which version it is on, and its memory and CPU use. Your app also needs the SDK installed, with startHeartbeat() called.'
+  },
   Healthy: {
     tone: 'ok',
     label: 'Healthy',
@@ -84,6 +89,9 @@ function HeartbeatStatus({ projectId }) {
   const [isLoading, setIsLoading] = useState(Boolean(projectId))
   const [error, setError] = useState('')
   const [now, setNow] = useState(() => Date.now())
+  const [isToggling, setIsToggling] = useState(false)
+  const [toggleError, setToggleError] = useState('')
+  const isTogglingRef = useRef(false)
 
   // Load now, then refresh quietly in the background (no loading flicker).
   useEffect(() => {
@@ -109,7 +117,7 @@ function HeartbeatStatus({ projectId }) {
 
     loadHeartbeat()
     const refreshTimer = setInterval(() => {
-      if (!document.hidden) loadHeartbeat()
+      if (!document.hidden && !isTogglingRef.current) loadHeartbeat()
     }, REFRESH_MS)
 
     return () => {
@@ -128,7 +136,27 @@ function HeartbeatStatus({ projectId }) {
   const lastHeartbeat = status ? parseServerDate(status.last_heartbeat_at) : null
   const runningVersions = Array.isArray(status?.running_versions) ? status.running_versions : []
   const instances = Array.isArray(status?.instances) ? status.instances : []
-  const hasData = status && status.state !== 'NoData'
+  const isEnabled = status ? status.heartbeat_enabled !== false : true
+  const hasData = isEnabled && status && status.state !== 'NoData'
+
+  async function handleToggle() {
+    if (!status || isTogglingRef.current) return
+    isTogglingRef.current = true
+    setIsToggling(true)
+    setToggleError('')
+    try {
+      await setHeartbeatEnabled(projectId, !isEnabled)
+      setStatus(await getHeartbeatStatus(projectId))
+      setError('')
+    } catch (toggleException) {
+      setToggleError(toggleException instanceof TypeError
+        ? 'Could not reach the server.'
+        : toggleException.message || 'Unable to change heartbeat monitoring.')
+    } finally {
+      isTogglingRef.current = false
+      setIsToggling(false)
+    }
+  }
 
   return (
     <section className="heartbeat" aria-labelledby="heartbeat-heading">
@@ -139,7 +167,30 @@ function HeartbeatStatus({ projectId }) {
             {diagnosis.label}
           </span>
         )}
+        {status && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isEnabled}
+            aria-label="Heartbeat monitoring"
+            aria-busy={isToggling}
+            className={`heartbeat-switch ${isEnabled ? 'heartbeat-switch--on' : ''}`}
+            onClick={handleToggle}
+            disabled={isToggling}
+          >
+            <span className="heartbeat-switch-track" aria-hidden="true">
+              <span className="heartbeat-switch-thumb" />
+            </span>
+            <span>{isToggling ? 'Saving…' : isEnabled ? 'On' : 'Off'}</span>
+          </button>
+        )}
       </div>
+
+      {toggleError && (
+        <p className="heartbeat-note" role="alert">
+          Could not change heartbeat monitoring ({toggleError})
+        </p>
+      )}
 
       {!projectId ? (
         <p role="status">A project is required to show its heartbeat.</p>
@@ -157,7 +208,7 @@ function HeartbeatStatus({ projectId }) {
 
           <p className="heartbeat-message">{diagnosis.message}</p>
 
-          {status.version_drift && (
+          {isEnabled && status.version_drift && (
             <p className="heartbeat-alert" role="alert">
               <strong>Version mismatch.</strong> The app reports {runningVersions.join(', ') || 'an unknown version'},
               but the latest deployment is {status.latest_deployed_version ?? 'unknown'}.
@@ -165,7 +216,7 @@ function HeartbeatStatus({ projectId }) {
             </p>
           )}
 
-          {status.possible_crash_loop && (
+          {isEnabled && status.possible_crash_loop && (
             <p className="heartbeat-alert" role="alert">
               <strong>Possible crash loop.</strong> Several instances started and stopped within the last 15 minutes.
               The app may be crashing and restarting.
@@ -200,7 +251,7 @@ function HeartbeatStatus({ projectId }) {
             </dl>
           )}
 
-          {instances.length > 0 && (
+          {isEnabled && instances.length > 0 && (
             <>
               <h3 id="heartbeat-instances-heading">Instances</h3>
               <div
