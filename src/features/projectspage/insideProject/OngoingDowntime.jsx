@@ -37,7 +37,7 @@ function OngoingDowntime({ projectId }) {
   }, [projectId])
 
   return (
-    <section aria-labelledby="ongoing-downtime-heading">
+    <section className="project-detail-section" aria-labelledby="ongoing-downtime-heading">
       <h2 id="ongoing-downtime-heading">Ongoing downtime</h2>
       {isLoading ? (
         <p aria-live="polite">Checking for ongoing downtime…</p>
@@ -67,7 +67,7 @@ function OngoingDowntime({ projectId }) {
           </div>
         </dl>
       ) : (
-        <p>No ongoing downtime found.</p>
+        <p className="project-detail-empty">No ongoing downtime found.</p>
       )}
     </section>
   )

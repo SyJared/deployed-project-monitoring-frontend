@@ -159,7 +159,7 @@ function HeartbeatStatus({ projectId }) {
   }
 
   return (
-    <section className="heartbeat" aria-labelledby="heartbeat-heading">
+    <section className="project-detail-section heartbeat" aria-labelledby="heartbeat-heading">
       <div className="heartbeat-header">
         <h2 id="heartbeat-heading">App heartbeat</h2>
         {diagnosis && (

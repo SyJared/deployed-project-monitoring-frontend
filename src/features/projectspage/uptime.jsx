@@ -38,11 +38,11 @@ function Uptime({ projectId, days = 20 }) {
   }, [projectId, days])
 
   if (isLoading) {
-    return <section aria-live="polite">Loading uptime...</section>
+    return <section className="project-detail-section" aria-live="polite"><h2>Uptime</h2><p>Loading uptime...</p></section>
   }
 
   if (error) {
-    return <section role="status">{error}</section>
+    return <section className="project-detail-section" role="status"><h2>Uptime</h2><p>{error}</p></section>
   }
 
   if (!uptime) return null
@@ -53,9 +53,9 @@ function Uptime({ projectId, days = 20 }) {
     : 'N/A'
 
   return (
-    <section aria-labelledby="uptime-heading">
+    <section className="project-detail-section" aria-labelledby="uptime-heading">
       <h2 id="uptime-heading">Uptime</h2>
-      <p>{formattedPercentage}</p>
+      <div className="project-detail-uptime"><strong>{formattedPercentage}</strong><span>Uptime</span></div>
       <dl>
         <div>
           <dt>Requested period</dt>

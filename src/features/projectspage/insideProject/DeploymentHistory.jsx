@@ -47,18 +47,18 @@ function DeploymentHistory({ projectId }) {
   }, [projectId])
 
   return (
-    <section aria-labelledby="deployment-history-heading">
+    <section className="project-detail-section" aria-labelledby="deployment-history-heading">
       <h2 id="deployment-history-heading">Deployment history</h2>
       {isLoading ? (
         <p aria-live="polite">Loading deployment history…</p>
       ) : error ? (
         <p role="status">{error}</p>
       ) : deployments.length === 0 ? (
-        <p>No deployments recorded for this project.</p>
+        <p className="project-detail-empty">No deployments recorded for this project.</p>
       ) : (
         <ul>
           {deployments.map((deployment, index) => (
-            <li key={deployment.id ?? `${deployment.created_at ?? deployment.deployed_at ?? 'deployment'}-${index}`}>
+            <li className="project-detail-history-item" key={deployment.id ?? `${deployment.created_at ?? deployment.deployed_at ?? 'deployment'}-${index}`}>
               <p><strong>Version:</strong> {deployment.version ?? 'N/A'}</p>
               <p><strong>Environment:</strong> {deployment.environment ?? 'N/A'}</p>
               <p><strong>Deployment ID:</strong> {deployment.deployment_id ?? 'N/A'}</p>

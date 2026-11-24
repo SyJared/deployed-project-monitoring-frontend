@@ -44,18 +44,18 @@ function DowntimeHistory({ projectId }) {
   }, [projectId])
 
   return (
-    <section aria-labelledby="downtime-heading">
+    <section className="project-detail-section" aria-labelledby="downtime-heading">
       <h2 id="downtime-heading">Downtime history</h2>
       {isLoading ? (
         <p aria-live="polite">Loading downtime history…</p>
       ) : error ? (
         <p role="status">{error}</p>
       ) : events.length === 0 ? (
-        <p>No downtime recorded for this project.</p>
+        <p className="project-detail-empty">No downtime recorded for this project.</p>
       ) : (
         <ul>
           {events.map((event) => (
-            <li key={event.id}>
+            <li className="project-detail-history-item" key={event.id}>
               <p><strong>Status:</strong> {event.status || 'Unknown'}</p>
               <p><strong>Started:</strong> {formatDate(event.started_at)}</p>
               <p><strong>Resolved:</strong> {event.resolved_at ? formatDate(event.resolved_at) : 'Ongoing'}</p>

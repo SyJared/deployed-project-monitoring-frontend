@@ -36,17 +36,24 @@ function HealthCheck({ projectId }) {
     return () => { isCurrentRequest = false }
   }, [projectId])
 
-  if (isLoading) return <section aria-live="polite">Loading latest health check…</section>
-  if (error) return <section role="status"><h2>Latest health check</h2><p>{error}</p></section>
-  if (!healthCheck) return <section><h2>Latest health check</h2><p>No health check data is available.</p></section>
+  if (isLoading) return <section className="project-detail-section" aria-live="polite"><h2>Latest health check</h2><p>Loading latest health check…</p></section>
+  if (error) return <section className="project-detail-section" role="status"><h2>Latest health check</h2><p className="project-detail-error">{error}</p></section>
+  if (!healthCheck) return <section className="project-detail-section"><h2>Latest health check</h2><p>No health check data is available.</p></section>
+
+  const normalizedStatus = String(healthCheck.status ?? '').toLowerCase()
+  const statusClass = ['healthy', 'up', 'online'].includes(normalizedStatus)
+    ? ''
+    : ['down', 'unhealthy', 'offline', 'error'].includes(normalizedStatus)
+      ? 'is-bad'
+      : 'is-neutral'
 
   return (
-    <section aria-labelledby="health-check-heading">
+    <section className="project-detail-section" aria-labelledby="health-check-heading">
       <h2 id="health-check-heading">Latest health check</h2>
       <dl>
         <div>
           <dt>Status</dt>
-          <dd>{healthCheck.status ?? 'N/A'}</dd>
+          <dd className={`project-detail-status ${statusClass}`}>{healthCheck.status ?? 'N/A'}</dd>
         </div>
         <div>
           <dt>HTTP status</dt>
@@ -62,7 +69,7 @@ function HealthCheck({ projectId }) {
         </div>
         <div>
           <dt>Error</dt>
-          <dd>{healthCheck.error_message || 'None'}</dd>
+          <dd className={healthCheck.error_message ? 'project-detail-error' : ''}>{healthCheck.error_message || 'None'}</dd>
         </div>
         <div>
           <dt>Check ID</dt>
