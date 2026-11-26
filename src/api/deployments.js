@@ -1,5 +1,7 @@
+import { authFetch } from '../jwt/http'
+
 export async function getDeploymentHistory(projectId) {
-  const response = await fetch(`/api/sdk/deployments/${encodeURIComponent(projectId)}`, {
+  const response = await authFetch(`/api/sdk/deployments/${encodeURIComponent(projectId)}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   })

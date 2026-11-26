@@ -1,5 +1,6 @@
+import { authFetch } from '../jwt/http'
 export async function checkAllDeployments(userId) {
-  const response = await fetch(`/api/monitoring/check-all/${userId}`,{
+  const response = await authFetch(`/api/monitoring/check-all/${userId}`,{
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userId)
@@ -11,7 +12,7 @@ export async function checkAllDeployments(userId) {
   return data;
 }
 export async function getUptime(projectId, days) {
-  const response = await fetch(`/api/monitoring/uptime/${projectId}?days=${days}`, {
+  const response = await authFetch(`/api/monitoring/uptime/${projectId}?days=${days}`, {
     method: "GET",
     headers: { 'Content-Type': 'application/json' }
   });
@@ -22,7 +23,7 @@ export async function getUptime(projectId, days) {
   return data;
 }
 export async function getHealthCheckById(projectId) {
-  const response = await fetch(`/api/monitoring/check/${projectId}`, {
+  const response = await authFetch(`/api/monitoring/check/${projectId}`, {
     method: "POST",
     headers: { 'Content-Type': 'application/json' }
   });
@@ -34,7 +35,7 @@ export async function getHealthCheckById(projectId) {
 }
 
 export async function getDowntimeHistory(projectId) {
-  const response = await fetch(`/api/monitoring/downtime/${projectId}`, {
+  const response = await authFetch(`/api/monitoring/downtime/${projectId}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });
@@ -46,7 +47,7 @@ export async function getDowntimeHistory(projectId) {
 }
 
 export async function getOngoingDowntime(projectId) {
-  const response = await fetch(`/api/monitoring/downtime/${projectId}/ongoing`, {
+  const response = await authFetch(`/api/monitoring/downtime/${projectId}/ongoing`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });

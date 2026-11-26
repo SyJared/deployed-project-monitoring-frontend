@@ -1,5 +1,7 @@
+import { authFetch } from '../jwt/http'
+
 export async function InsertProject(payload){
-  const response = await fetch('/api/projects/insert',{
+  const response = await authFetch('/api/projects/insert',{
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -8,7 +10,7 @@ export async function InsertProject(payload){
 }
 
 export async function GetProjectsByUserId(userId){
-  const response = await fetch(`/api/projects/user/${userId}`,{
+  const response = await authFetch(`/api/projects/user/${userId}`,{
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   })

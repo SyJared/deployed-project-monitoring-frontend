@@ -1,23 +1,19 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Bell, ChevronDown, FolderKanban, LayoutDashboard, Search } from 'lucide-react'
+import { clearSession, getUser, isSignedIn } from '../../jwt/session'
 import './header.css'
 
 function Header() {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
-  let user = null
-  try {
-    user = JSON.parse(sessionStorage.getItem('user') || 'null')
-  } catch {
-    user = null
-  }
+  const user = isSignedIn() ? getUser() : null
 
   if (!location.pathname.startsWith('/projects') || !user?.id) return null
 
   function handleSignOut() {
-    sessionStorage.removeItem('user')
+    clearSession()
     navigate('/login', { replace: true })
   }
 

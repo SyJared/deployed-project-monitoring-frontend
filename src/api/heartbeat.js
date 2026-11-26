@@ -1,9 +1,11 @@
+import { authFetch } from '../jwt/http'
+
 // Same prefix as the SDKs heartbeat endpoint. If your GET lives somewhere else
 // (for example /api/monitoring/heartbeat), change it here only.
 const HEARTBEAT_URL = '/api/sdk/heartbeat'
 
 async function request(url, options, fallbackMessage) {
-  const response = await fetch(url, {
+  const response = await authFetch(url, {
     headers: { 'Content-Type': 'application/json' },
     ...options
   })

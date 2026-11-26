@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, register } from '../../../api/auth.js'
+import { saveSession } from '../../../jwt/session.js'
 import './AuthPage.css'
 
 function AuthPage() {
   const navigate = useNavigate()
   const [mode, setMode] = useState('login')
-  const [notice, setNotice] = useState('')
+  // Sent here by a 401 from the server (or an expired session)
+  const [notice, setNotice] = useState(() =>
+    new URLSearchParams(window.location.search).has('expired')
+      ? 'Your session has expired. Please sign in again.'
+      : '')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [username, setUsername] = useState('')
   const isRegistering = mode === 'register'
@@ -38,11 +43,14 @@ function AuthPage() {
       } else {
         const result = await login({ username: formData.get('username'), password: formData.get('password') })
         const user = result.user ?? result
-        sessionStorage.setItem('user', JSON.stringify(user))
         const userId = user.id
         if (userId == null) {
           throw new Error('The login response did not include a user ID.')
         }
+        if (!result.token) {
+          throw new Error('The login response did not include a session token.')
+        }
+        saveSession({ user, token: result.token, expiresAt: result.expires_at })
         navigate(`/projects/${encodeURIComponent(userId)}`, { replace: true })
       }
     } catch (error) {
